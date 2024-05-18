@@ -1,5 +1,7 @@
 <?php
 
+use function PHPSTORM_META\elementType;
+
 class Controller {
     private $data;
     private Dungeon $dungeon;
@@ -28,8 +30,55 @@ class Controller {
                 exit;
         }
     }
+    private function validateDungeon(): bool{
+        $n = null;
+        if (isset($this->data['n'])){
+            $n = intval($this->data['n']);
+        }
+        else 
+            return false;
+
+        if (isset($this->data['start'])){
+            if (intval($this->data['start']) < 0 || 
+            intval($this->data['start']) >= $n )
+                return false;
+        }
+        else
+            return false;
+
+        if (isset($this->data['finish'])){
+            if (intval($this->data['finish']) < 0 || 
+            intval($this->data['finish']) >= $n )
+                return false;
+        }
+        else
+            return false;
+
+        if (isset($this->data['rooms'])){
+            if (count($this->data['rooms']) != $n)
+                return false;
+        }
+        else
+            return false;
+
+        if (isset($this->data['routes'])){
+            foreach ($this->data['routes'] as $curRoutes){
+                foreach ($curRoutes as $cur){
+                    if ($cur >= $n || $cur < 0)
+                        return false;
+                }
+            }
+        }
+        else
+            return false;
+        return true;
+    }
     private function startGame(){
         try{
+            if (!$this->validateDungeon()){
+                http_response_code(400);
+                exit;
+            }
             $this->dungeon = new Dungeon($this->data['n'], $this->data['start'],
             $this->data['finish'], $this->data['rooms'], $this->data['routes']);
             echo json_encode($this->dungeon->startGame());
