@@ -6,6 +6,7 @@ class Controller {
     private $data;
     private Dungeon $dungeon;
     private bool $gameStatus;
+    private Gateway $gateway;
     public function __construct(){
         $this->gameStatus = false;
     }
@@ -97,8 +98,10 @@ class Controller {
             exit;
         }
         $info = $this->dungeon->move(intval($this->data['target']));
-        if (isset($info['finalScore']))
+        if (isset($info['finalScore'])){
             $this->gameStatus = false;
+            Gateway::insertScore(intval($info['finalScore']));
+        }
         echo json_encode($info);
         http_response_code(200);
         exit;
@@ -110,8 +113,10 @@ class Controller {
             exit;
         }
         $info = $this->dungeon->fight();
-        if (isset($info['finalScore']))
+        if (isset($info['finalScore'])){
             $this->gameStatus = false;
+            Gateway::insertScore(intval($info['finalScore']));
+        }
         echo json_encode($info);
         http_response_code(200);
         exit;

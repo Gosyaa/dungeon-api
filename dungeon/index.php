@@ -3,6 +3,7 @@ require('resources/ErrorHandler.php');
 require('resources/Controller.php');
 require('resources/Dungeon.php');
 require('resources/Queue.php');
+require('resources/Gateway.php');
 
 
 session_start();
